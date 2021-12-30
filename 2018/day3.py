@@ -1,5 +1,6 @@
 import re
 import numpy as np
+import helpers
 
 
 def get_max_dimensions(pieces_info):
@@ -22,24 +23,63 @@ def get_dimensions(area_input):
     return int(groups[0]), int(groups[1])
 
 
-puzzle_input = [
-    '#1 @ 1,3: 4x4',
-    '#2 @ 3,1: 4x4',
-    '#3 @ 5,5: 2x2'
-]
+def cut_factory(cut_information, fabric_size):
+    fabric = np.zeros(fabric_size)
+    origin = get_origin(cut_information)
+    size = get_dimensions(cut_information)
+    x_o, y_o = origin[0], origin[1]
+    width, heigth = size[0], size[1]
+    fabric[y_o:y_o + heigth, x_o:x_o + width] = 1
+    return fabric
 
-fabric_size = get_max_dimensions(puzzle_input)
-fabric = np.zeros(fabric_size)
 
-for cut in puzzle_input:
-    origin = get_origin(cut)
-    size = get_dimensions(cut)
-    xo = origin[0]
-    yo = origin[1]
-    width = size[0]
-    heigth = size[1]
-    fabric[yo:yo + heigth, xo:xo + width] = 1
-    print(fabric)
+def get_common_area(puzzle_input, fabric_size):
+    cut_number = 1
+    for cut_info in puzzle_input:
+        if cut_number == 1:
+            cut = cut_factory(cut_info, fabric_size)
+        else:
+            cut += cut_factory(cut_info, fabric_size)
+        cut_number += 1
+    common_area = np.zeros(fabric_size)
+    common_area[np.where(cut >= 2)] = 1
+    return common_area
+
+
+def solve_part_1(puzzle_input):
+    fabric_size = get_max_dimensions(puzzle_input)
+    common_area = get_common_area(puzzle_input, fabric_size)
+    return np.sum(common_area)
+
+
+def solve_part_2(puzzle_input):
+    untouched_cut = None
+    fabric_size = get_max_dimensions(puzzle_input)
+    commom_area = get_common_area(puzzle_input, fabric_size)
+    cut_number = 1
+    for cut_info in puzzle_input:
+        cut = cut_factory(cut_info, fabric_size)
+        intersection = np.logical_and(cut, commom_area)
+        if not np.any(intersection):
+            untouched_cut = cut_number
+            break
+        cut_number += 1
+    return untouched_cut
+
+
+puzzle_input = helpers.read_puzzle_input('day3input.txt')
+
+# print(solve_part_1(puzzle_input))
+print(solve_part_2(puzzle_input))
+
+
+
+
+
+
+
+
+
 
 
 

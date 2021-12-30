@@ -69,6 +69,7 @@ def solve_part_2(strings):
 
 puzzle_input = helpers.read_puzzle_input('day2input.txt')
 
+print(solve_part_1(puzzle_input))
 print(solve_part_2(puzzle_input))
 
 

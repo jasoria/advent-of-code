@@ -33,5 +33,3 @@ result_part_1 = calc_resulting_frequency(puzzle_input)
 # Part 2
 result_part_2 = find_first_repeating_frequency(puzzle_input)
 
-print(result_part_2)
-
